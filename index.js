@@ -39,6 +39,16 @@ async function run() {
         const result = await assignmentCollection.insertOne(newAssignment)
         res.send(result)
     })
+
+    // ---Get All Assignments---
+    app.get('/assignments',async(req,res)=>{
+        const result = await assignmentCollection.find().toArray()
+        res.send(result)
+    })
+
+
+
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
