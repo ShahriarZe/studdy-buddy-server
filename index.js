@@ -100,6 +100,21 @@ async function run() {
     })
 
 
+    // ---Update Staus---
+    app.patch('/submissions/:id',async(req,res)=>{
+      const id = req.params.id
+      const filter = {_id : new ObjectId(id)}
+      const updateStatus= req.body
+      const updatedDoc = {
+        $set : {
+          status:updateStatus.status
+        }
+      }
+      const result = await submittedCollection.updateOne(filter,updatedDoc)
+      res.send(result)
+    })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
