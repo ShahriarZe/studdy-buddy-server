@@ -93,6 +93,12 @@ async function run() {
 
     })
 
+    // ---Get a Submission---
+    app.get('/submissions',async(req,res)=>{
+      const result = await submittedCollection.find().toArray()
+      res.send(result)
+    })
+
 
 
     // Send a ping to confirm a successful connection
