@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin:['http://localhost:5173'],
+  origin:['https://study-buddy-1db4a.web.app','https://study-buddy-1db4a.firebaseapp.com'],
   credentials:true
 }));
 app.use(express.json());
@@ -68,14 +68,25 @@ async function run() {
       res
       .cookie('token',token,{
         httpOnly:true,
-        secure:false
+        secure:true,
+        sameSite:'none'
       })
       .send({success:true})
     })
 
 
+    app.post('/logout',async(req,res)=>{
+      const user = req.body;
+      console.log('Logging Out',user)
+      res
+      .clearCookie('token',{maxAge:0})
+      .send({success:true})
+
+    })
+
+
     // ---Create Assignment---
-    app.post('/assignments',async(req,res)=>{
+    app.post('/assignments',verify,async(req,res)=>{
         const newAssignment = req.body
         console.log(newAssignment)
 
@@ -173,7 +184,7 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
