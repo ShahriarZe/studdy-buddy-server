@@ -100,6 +100,19 @@ async function run() {
     })
 
 
+
+    // ---Get Submission By Email ---
+    app.get('/singlesubmission',async(req,res)=>{
+      console.log(req.query);
+      let query = {};
+      if(req.query?.userEmail){
+        query={userEmail : req.query.userEmail}
+      }
+      const result = await submittedCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    
     // ---Update Staus---
     app.patch('/submissions/:id',async(req,res)=>{
       const id = req.params.id
