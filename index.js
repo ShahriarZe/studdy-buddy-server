@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
@@ -30,6 +31,14 @@ async function run() {
 
     const assignmentCollection = client.db('assignmentdb').collection('assignments')
     const submittedCollection = client.db('assignmentdb').collection('submissions')
+
+
+    // JWT Related API 
+    app.post('/jwt',async(req,res)=>{
+      const user = req.body
+      console.log(user)
+      res.send(user)
+    })
 
 
     // ---Create Assignment---
@@ -112,7 +121,7 @@ async function run() {
       res.send(result)
     })
 
-    
+
     // ---Update Staus---
     app.patch('/submissions/:id',async(req,res)=>{
       const id = req.params.id
