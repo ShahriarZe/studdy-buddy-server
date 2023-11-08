@@ -29,6 +29,28 @@ const client = new MongoClient(uri, {
   }
 });
 
+// MiddleWare
+const logger= async(req,res,next)=>{
+  console.log('Call',req.host,req.originalUrl)
+  next()
+}
+
+const verify = async(req,res,next)=>{
+  const token = req.cookies?.token
+  if(!token){
+    return res.status(401).send({message:'Not Authorized'})
+  }
+  jwt.verify(token,process.env.TOKEN,(err,decoded)=>{
+    if(err){
+      return res.status(401).send({message:'UnAuthorized'})
+    }
+    console.log('Value',decoded)
+    req.user=decoded;
+    next()
+  })
+}
+
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -39,7 +61,7 @@ async function run() {
 
 
     // JWT Related API 
-    app.post('/jwt',async(req,res)=>{
+    app.post('/jwt', async(req,res)=>{
       const user = req.body
       console.log(user)
       const token = jwt.sign(user,process.env.TOKEN,{expiresIn:'1h'})
@@ -68,7 +90,7 @@ async function run() {
     })
 
     // ---Update Assignment---
-    app.get('/assignments/:id',async(req,res)=>{
+    app.get('/assignments/:id', async(req,res)=>{
       const id = req.params.id
       const query = {_id: new ObjectId(id)}
       const result = await assignmentCollection.findOne(query)
@@ -122,9 +144,9 @@ async function run() {
 
 
     // ---Get Submission By Email ---
-    app.get('/singlesubmission',async(req,res)=>{
+    app.get('/singlesubmission', async(req,res)=>{
       console.log(req.query);
-      console.log('tok tok token',req.cookies.token);
+      console.log('token',req.cookies.token);
       let query = {};
       if(req.query?.userEmail){
         query={userEmail : req.query.userEmail}
